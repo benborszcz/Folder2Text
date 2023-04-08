@@ -1,6 +1,6 @@
 # Folder2Text
 
-Folder2Text is a simple command line tool that combines all the text files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
+Folder2Text is a simple command line tool that combines all the non-binary files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
 
 ## Installation
 
@@ -9,7 +9,7 @@ Before installing Folder2Text, make sure you have Python 3.6 or higher installed
 1. Clone the repository or download the source code:
 
    ```
-   git clone https://github.com/your_username/folder2text.git
+   git clone https://github.com/benborszcz/folder2text.git
    ```
 
    Alternatively, download the zip file and extract it.
