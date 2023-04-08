@@ -9,7 +9,7 @@ Before installing Folder2Text, make sure you have Python 3.6 or higher installed
 1. Clone the repository or download the source code:
 
    ```
-   git clone https://github.com/your_username/folder2text.git
+   git clone https://github.com/benborszcz/folder2text.git
    ```
 
    Alternatively, download the zip file and extract it.
