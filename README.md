@@ -1,6 +1,6 @@
 # Folder2Text
 
-Folder2Text is a simple command line tool that combines all the text files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
+Folder2Text is a simple command line tool that combines all the non-binary files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
 
 ## Installation
 
