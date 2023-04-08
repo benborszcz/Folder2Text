@@ -24,13 +24,22 @@ def read_and_combine_files(folder_path, output_file, ignore_gitignored=False):
             for file in files:
                 file_path = os.path.join(root, file)
 
-                if ".git" in file_path:
+                # Check if the current file is the output file
+                if file_path == os.path.join(root, output_file):
+                    print(f"{file_path} Skipped")
                     continue
 
-                if ignore_gitignored and spec.match_file(file_path):
+                if ".git" in file_path:
+                    print(f"{file_path} Skipped")
                     continue
+
+                if ignore_gitignored:
+                    if spec.match_file(file_path) or file in {".gitignore", ".gcloudignore"}:
+                        print(f"{file_path} Skipped")
+                        continue
 
                 if not is_text_file(file_path):
+                    print(f"{file_path} Skipped")
                     continue
 
                 relative_path = os.path.relpath(file_path, folder_path)
@@ -39,6 +48,7 @@ def read_and_combine_files(folder_path, output_file, ignore_gitignored=False):
                 
                 with open(file_path, 'r', errors='ignore') as infile:
                     contents = infile.read()
+                    print(f"{file_path} Scanned")
                     outfile.write(f"{contents}\n")
                 
                 outfile.write("----------\n\n")
