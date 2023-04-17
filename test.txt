@@ -1,0 +1,74 @@
+.
++---.git
+|   |---config
+|   |---description
+|   |---HEAD
+|   +---hooks
+|   |   |---applypatch-msg.sample
+|   |   |---commit-msg.sample
+|   |   |---fsmonitor-watchman.sample
+|   |   |---post-update.sample
+|   |   |---pre-applypatch.sample
+|   |   |---pre-commit.sample
+|   |   |---pre-merge-commit.sample
+|   |   |---pre-push.sample
+|   |   |---pre-rebase.sample
+|   |   |---pre-receive.sample
+|   |   |---prepare-commit-msg.sample
+|   |   |---push-to-checkout.sample
+|   |   |---update.sample
+|   |---index
+|   +---info
+|   |   |---exclude
+|   +---logs
+|   |   |---HEAD
+|   |   +---refs
+|   |   |   +---heads
+|   |   |   |   |---main
+|   |   |   +---remotes
+|   |   |   |   +---origin
+|   |   |   |   |   |---HEAD
+|   +---objects
+|   |   +---info
+|   |   +---pack
+|   |   |   |---pack-fa53f4f1487ca4f59dcd0a8d428d17f4ec5e17a1.idx
+|   |   |   |---pack-fa53f4f1487ca4f59dcd0a8d428d17f4ec5e17a1.pack
+|   |---packed-refs
+|   +---refs
+|   |   +---heads
+|   |   |   |---main
+|   |   +---remotes
+|   |   |   +---origin
+|   |   |   |   |---HEAD
+|   |   +---tags
+|---.gitignore
++---.vs
+|   +---Folder2Text
+|   |   +---FileContentIndex
+|   |   |   |---6ee2994b-4dd4-477c-b63c-24fd8d0f612b.vsidx
+|   |   |   |---affb8bd9-ad0a-4f04-994d-6166e54e325d.vsidx
+|   |   |   |---b8595de6-e0fc-4d06-b68f-c88ab67f2065.vsidx
+|   |   |   +---merges
+|   |   |   |---read.lock
+|   |   +---v17
+|   |   |   |---.wsuo
+|   |---ProjectSettings.json
+|   |---slnx.sqlite
+|   |---VSWorkspaceState.json
+|---combine_files.py
++---folder2text.egg-info
+|   |---dependency_links.txt
+|   |---entry_points.txt
+|   |---PKG-INFO
+|   |---requires.txt
+|   |---SOURCES.txt
+|   |---top_level.txt
+|---LICENSE
+|---output.txt
+|---README.md
+|---requirements.txt
+|---setup.py
+|---struct.txt
+|---test.txt
++---__pycache__
+|   |---combine_files.cpython-310.pyc
