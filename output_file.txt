@@ -1,0 +1,471 @@
+LICENSE
+----------
+MIT License
+
+Copyright (c) 2023 benborszcz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------
+
+output.txt
+----------
+combine_files.py
+----------
+import os
+import magic
+import argparse
+import pathspec
+
+def is_text_file(file_path):
+    magic_obj = magic.Magic()
+    file_type = magic_obj.from_file(file_path)
+    return "text" in file_type
+
+def read_gitignore(folder_path):
+    gitignore_path = os.path.join(folder_path, ".gitignore")
+    if os.path.exists(gitignore_path):
+        with open(gitignore_path, "r") as gitignore_file:
+            return gitignore_file.read().splitlines()
+    return []
+
+def read_and_combine_files(folder_path, output_file, ignore_gitignored=False):
+    gitignore_patterns = read_gitignore(folder_path) if ignore_gitignored else []
+    spec = pathspec.PathSpec.from_lines(pathspec.patterns.GitWildMatchPattern, gitignore_patterns)
+
+    with open(output_file, 'w') as outfile:
+        for root, _, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+
+                # Check if the current file is the output file
+                if file_path == os.path.join(root, output_file):
+                    print(f"{file_path} Skipped")
+                    continue
+
+                if ".git" in file_path:
+                    print(f"{file_path} Skipped")
+                    continue
+
+                if ignore_gitignored:
+                    if spec.match_file(file_path) or file in {".gitignore", ".gcloudignore"}:
+                        print(f"{file_path} Skipped")
+                        continue
+
+                if not is_text_file(file_path):
+                    print(f"{file_path} Skipped")
+                    continue
+
+                relative_path = os.path.relpath(file_path, folder_path)
+                outfile.write(f"{relative_path}\n")
+                outfile.write("----------\n")
+                
+                with open(file_path, 'r', errors='ignore') as infile:
+                    contents = infile.read()
+                    print(f"{file_path} Scanned")
+                    outfile.write(f"{contents}\n")
+                
+                outfile.write("----------\n\n")
+
+def main():
+    parser = argparse.ArgumentParser(description="Combine text files in a folder.")
+    parser.add_argument("folder_path", help="Path to the folder containing the files.")
+    parser.add_argument("output_file", help="Name of the output file.")
+    parser.add_argument("--ignore-gitignored", action="store_true", help="Ignore files specified in .gitignore")
+    args = parser.parse_args()
+
+    read_and_combine_files(args.folder_path, args.output_file, args.ignore_gitignored)
+    print(f"Files combined and saved to {args.output_file}")
+
+if __name__ == "__main__":
+    main()
+----------
+
+README.md
+----------
+# Folder2Text
+
+Folder2Text is a simple command line tool that combines all the text files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
+
+## Installation
+
+Before installing Folder2Text, make sure you have Python 3.6 or higher installed on your system. You can check your Python version by running `python --version` in your command prompt or terminal.
+
+1. Clone the repository or download the source code:
+
+   ```
+   git clone https://github.com/your_username/folder2text.git
+   ```
+
+   Alternatively, download the zip file and extract it.
+
+2. Change to the project directory:
+
+   ```
+   cd folder2text
+   ```
+
+3. Install the required dependencies:
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Install the package:
+
+   ```
+   pip install -e .
+   ```
+
+5. Verify the installation by running `folder2text --help`. If everything is set up correctly, you should see the help text for the tool.
+
+## Usage
+
+To combine text files in a folder, simply run:
+
+```
+folder2text /path/to/folder output_file.txt
+```
+
+Or naviagate to the folder and run:
+```
+folder2text . output_file.txt
+```
+
+This will create a file named `output_file.txt` with the combined contents of all text files in the specified folder and its subfolders.
+
+If you want to ignore files specified in a `.gitignore` file present in the folder, use the `--ignore-gitignored` flag:
+
+```
+folder2text /path/to/folder output_file.txt --ignore-gitignored
+```
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contributing
+
+Feel free to submit issues, feature requests, and pull requests!
+----------
+
+requirements.txt
+----------
+pathspec
+python-magic
+python-magic-bin; sys_platform == 'win32'
+----------
+
+setup.py
+----------
+from setuptools import setup, find_packages
+import sys
+
+install_requires = ["python-magic", "pathspec"]
+if sys.platform.startswith("win"):
+    install_requires.remove("python-magic")
+    install_requires.append("python-magic-bin")
+
+setup(
+    name="folder2text",
+    version="0.1",
+    packages=find_packages(),
+    install_requires=install_requires,
+    entry_points={
+        "console_scripts": [
+            "folder2text = combine_files:main",
+        ],
+    },
+)
+----------
+
+
+----------
+
+README.md
+----------
+# Folder2Text
+
+Folder2Text is a simple command line tool that combines all the non-binary files in a specified folder and its subfolders into a single text file. It can also ignore files specified in a `.gitignore` file present in the folder.
+
+## Installation
+
+Before installing Folder2Text, make sure you have Python 3.6 or higher installed on your system. You can check your Python version by running `python --version` in your command prompt or terminal.
+
+1. Clone the repository or download the source code:
+
+   ```
+   git clone https://github.com/benborszcz/folder2text.git
+   ```
+
+   Alternatively, download the zip file and extract it.
+
+2. Change to the project directory:
+
+   ```
+   cd folder2text
+   ```
+
+3. Install the required dependencies:
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Install the package:
+
+   ```
+   pip install -e .
+   ```
+
+5. Verify the installation by running `folder2text --help`. If everything is set up correctly, you should see the help text for the tool.
+
+## Usage
+
+To combine text files in a folder, simply run:
+
+```
+folder2text /path/to/folder output_file.txt
+```
+
+Or naviagate to the folder and run:
+```
+folder2text . output_file.txt
+```
+
+This will create a file named `output_file.txt` with the combined contents of all text files in the specified folder and its subfolders.
+
+If you want to ignore files specified in a `.gitignore` file present in the folder, use the `--ignore-gitignored` flag:
+
+```
+folder2text /path/to/folder output_file.txt --ignore-gitignored
+```
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contributing
+
+Feel free to submit issues, feature requests, and pull requests!
+
+----------
+
+requirements.txt
+----------
+pathspec
+python-magic
+python-magic-bin; sys_platform == 'win32'
+----------
+
+setup.py
+----------
+from setuptools import setup, find_packages
+import sys
+
+install_requires = ["python-magic", "pathspec"]
+if sys.platform.startswith("win"):
+    install_requires.remove("python-magic")
+    install_requires.append("python-magic-bin")
+
+setup(
+    name="folder2text",
+    version="0.1",
+    packages=find_packages(),
+    install_requires=install_requires,
+    entry_points={
+        "console_scripts": [
+            "folder2text = src.combine_files:main",
+        ],
+    },
+)
+----------
+
+test.txt
+----------
+.
++---.git
+|   |---config
+|   |---description
+|   |---HEAD
+|   +---hooks
+|   |   |---applypatch-msg.sample
+|   |   |---commit-msg.sample
+|   |   |---fsmonitor-watchman.sample
+|   |   |---post-update.sample
+|   |   |---pre-applypatch.sample
+|   |   |---pre-commit.sample
+|   |   |---pre-merge-commit.sample
+|   |   |---pre-push.sample
+|   |   |---pre-rebase.sample
+|   |   |---pre-receive.sample
+|   |   |---prepare-commit-msg.sample
+|   |   |---push-to-checkout.sample
+|   |   |---update.sample
+|   |---index
+|   +---info
+|   |   |---exclude
+|   +---logs
+|   |   |---HEAD
+|   |   +---refs
+|   |   |   +---heads
+|   |   |   |   |---main
+|   |   |   +---remotes
+|   |   |   |   +---origin
+|   |   |   |   |   |---HEAD
+|   +---objects
+|   |   +---info
+|   |   +---pack
+|   |   |   |---pack-fa53f4f1487ca4f59dcd0a8d428d17f4ec5e17a1.idx
+|   |   |   |---pack-fa53f4f1487ca4f59dcd0a8d428d17f4ec5e17a1.pack
+|   |---packed-refs
+|   +---refs
+|   |   +---heads
+|   |   |   |---main
+|   |   +---remotes
+|   |   |   +---origin
+|   |   |   |   |---HEAD
+|   |   +---tags
+|---.gitignore
++---.vs
+|   +---Folder2Text
+|   |   +---FileContentIndex
+|   |   |   |---6ee2994b-4dd4-477c-b63c-24fd8d0f612b.vsidx
+|   |   |   |---affb8bd9-ad0a-4f04-994d-6166e54e325d.vsidx
+|   |   |   |---b8595de6-e0fc-4d06-b68f-c88ab67f2065.vsidx
+|   |   |   +---merges
+|   |   |   |---read.lock
+|   |   +---v17
+|   |   |   |---.wsuo
+|   |---ProjectSettings.json
+|   |---slnx.sqlite
+|   |---VSWorkspaceState.json
+|---combine_files.py
++---folder2text.egg-info
+|   |---dependency_links.txt
+|   |---entry_points.txt
+|   |---PKG-INFO
+|   |---requires.txt
+|   |---SOURCES.txt
+|   |---top_level.txt
+|---LICENSE
+|---output.txt
+|---README.md
+|---requirements.txt
+|---setup.py
+|---struct.txt
+|---test.txt
++---__pycache__
+|   |---combine_files.cpython-310.pyc
+
+----------
+
+src\combine_files.py
+----------
+import os
+import magic
+import argparse
+import pathspec
+
+def is_text_file(file_path):
+    magic_obj = magic.Magic()
+    file_type = magic_obj.from_file(file_path)
+    return "text" in file_type
+
+def read_gitignore(folder_path):
+    gitignore_path = os.path.join(folder_path, ".gitignore")
+    if os.path.exists(gitignore_path):
+        with open(gitignore_path, "r") as gitignore_file:
+            return gitignore_file.read().splitlines()
+    return []
+
+def visualize_file_structure(folder_path, output_file, ignore_gitignored=False):
+    gitignore_patterns = read_gitignore(folder_path) if ignore_gitignored else []
+    spec = pathspec.PathSpec.from_lines(pathspec.patterns.GitWildMatchPattern, gitignore_patterns)
+
+    def _visualize_directory(root, prefix=''):
+        nonlocal spec
+        for name in os.listdir(root):
+            file_path = os.path.join(root, name)
+            if ignore_gitignored:
+                if spec.match_file(file_path) or name in {".gitignore", ".gcloudignore"}:
+                    print(f"{file_path} Skipped")
+                    continue
+
+            if os.path.isfile(file_path):
+                outfile.write(f"{prefix}|---{name}\n")
+            elif os.path.isdir(file_path):
+                outfile.write(f"{prefix}+---{name}\n")
+                _visualize_directory(file_path, prefix=prefix + '|   ')
+
+    with open(output_file, 'w') as outfile:
+        outfile.write(f"{os.path.basename(folder_path)}\n")
+        _visualize_directory(folder_path)
+
+def read_and_combine_files(folder_path, output_file, ignore_gitignored=False, visualize=False):
+    if visualize:
+        visualize_file_structure(folder_path, output_file, ignore_gitignored)
+    else:
+        gitignore_patterns = read_gitignore(folder_path) if ignore_gitignored else []
+        spec = pathspec.PathSpec.from_lines(pathspec.patterns.GitWildMatchPattern, gitignore_patterns)
+
+        with open(output_file, 'w') as outfile:
+            for root, _, files in os.walk(folder_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+
+                    if ".git" in file_path:
+                        print(f"{file_path} Skipped")
+                        continue
+
+                    if ignore_gitignored:
+                        if spec.match_file(file_path) or file in {".gitignore", ".gcloudignore"}:
+                            print(f"{file_path} Skipped")
+                            continue
+
+                    if not is_text_file(file_path):
+                        print(f"{file_path} Skipped")
+                        continue
+
+                    relative_path = os.path.relpath(file_path, folder_path)
+                    outfile.write(f"{relative_path}\n")
+                    outfile.write("----------\n")
+                    
+                    with open(file_path, 'r', errors='ignore') as infile:
+                        contents = infile.read()
+                        print(f"{file_path} Scanned")
+                        outfile.write(f"{contents}\n")
+                    
+                    outfile.write("----------\n\n")
+
+def main():
+    parser = argparse.ArgumentParser(description="Combine text files in a folder.")
+    parser.add_argument("folder_path", help="Path to the folder containing the files.")
+    parser.add_argument("output_file", help="Name of the output file.")
+    parser.add_argument("--ignore-gitignored", action="store_true", help="Ignore files specified in .gitignore")
+    parser.add_argument("--visualize", action="store_true", help="Create file structure text visualization")
+    args = parser.parse_args()
+
+    read_and_combine_files(args.folder_path, args.output_file, args.ignore_gitignored, args.visualize)
+    print(f"Files combined and saved to {args.output_file}")
+
+if __name__ == "__main__":
+    main()
+----------
+

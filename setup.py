@@ -13,7 +13,7 @@ setup(
     install_requires=install_requires,
     entry_points={
         "console_scripts": [
-            "folder2text = combine_files:main",
+            "folder2text = src.combine_files:main",
         ],
     },
 )
