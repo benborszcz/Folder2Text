@@ -64,15 +64,15 @@ def read_and_combine_files(folder_path, output_file, ignore_gitignored=False, vi
                         continue
 
                     relative_path = os.path.relpath(file_path, folder_path)
-                    outfile.write(f"{relative_path}\n")
-                    outfile.write("----------\n")
+                    outfile.write(f"# {relative_path}\n")
+                    outfile.write("```\n")
                     
                     with open(file_path, 'r', errors='ignore') as infile:
                         contents = infile.read()
                         print(f"{file_path} Scanned")
                         outfile.write(f"{contents}\n")
                     
-                    outfile.write("----------\n\n")
+                    outfile.write("```\n\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Combine text files in a folder.")

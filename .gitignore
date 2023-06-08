@@ -130,3 +130,7 @@ dmypy.json
 
 #other
 .vs
+output_file.txt
+output.txt
+struct.txt
+test.txt
