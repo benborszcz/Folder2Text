@@ -1,10 +1,7 @@
 from setuptools import setup, find_packages
 import sys
 
-install_requires = ["python-magic", "pathspec"]
-if sys.platform.startswith("win"):
-    install_requires.remove("python-magic")
-    install_requires.append("python-magic-bin")
+install_requires = ["python-magic-bin", "pathspec"]
 
 setup(
     name="folder2text",
